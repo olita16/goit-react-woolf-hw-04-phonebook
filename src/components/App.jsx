@@ -5,26 +5,24 @@ import ContactForm from './ContactForm/ContactForm';
 import NoContactsMessage from './Message/Message';
 import Filter from '../components/Filter/Filter';
 
-
 function App() {
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState(() => {
+    const savedContacts = localStorage.getItem('contacts');
+    return savedContacts ? JSON.parse(savedContacts) : [];
+  });
+
   const [filter, setFilter] = useState('');
 
-  // Завантаження контактів із localStorage при монтуванні компонента
-  useEffect(() => {
-    const savedContacts = localStorage.getItem('contacts');
-    if (savedContacts) {
-      setContacts(JSON.parse(savedContacts));
-    }
-  }, []);
-
-  // Збереження контактів у localStorage при зміні контактів
   useEffect(() => {
     localStorage.setItem('contacts', JSON.stringify(contacts));
   }, [contacts]);
 
   const addContact = ({ name, number }) => {
-    if (contacts.find(contact => contact.name.toLowerCase() === name.toLowerCase())) {
+    if (
+      contacts.find(
+        contact => contact.name.toLowerCase() === name.toLowerCase()
+      )
+    ) {
       alert(`${name} is already in contacts`);
       return;
     }
@@ -39,7 +37,9 @@ function App() {
   };
 
   const deleteContact = contactId => {
-    setContacts(prevContacts => prevContacts.filter(contact => contact.id !== contactId));
+    setContacts(prevContacts =>
+      prevContacts.filter(contact => contact.id !== contactId)
+    );
   };
 
   const changeFilter = event => {
@@ -77,4 +77,3 @@ function App() {
 }
 
 export default App;
-
